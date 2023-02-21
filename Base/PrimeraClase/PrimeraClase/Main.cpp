@@ -14,11 +14,20 @@ int main()
     //Se debe agregar el contexto de OpenGL. Cada ventana GLFW tiene su propio contexto. 
     glfwMakeContextCurrent(GWindow);
 
+    gladLoadGL();
+    glViewport(0,0,800,800);//Coordenadas de la ventana viewport
+    glClearColor(.3, .2, .8, 0); //Color en 0 - 1
+    glClear(GL_COLOR_BUFFER_BIT); //Limpia el viewport 
+    glfwSwapBuffers(GWindow); 
+
     //Mientras no se cierre la ventana, lee los eventos. Se debe mantener viva la ventana. 
     while (!glfwWindowShouldClose(GWindow))
     {
         glfwPollEvents();
     }
+
+    //Destruye la ventana
+    glfwDestroyWindow(GWindow);
 
     glfwTerminate();
     return 0;
