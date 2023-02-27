@@ -9,129 +9,192 @@ const char* vertexShaderSource = "#version 330 core\n"
 "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 "}\0";
 
+const char* insideVertexShaderSource = "#version 330 core\n"
+"layout (location = 0) in vec3 aPos; \n"
+"void main()\n"
+"{\n"
+"    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"    FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
+"    FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);\n"
 "}\n\0";
 
+const char* insideFragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"    FragColor = vec4(0.9922f, 0.9052f, 0.298f, 1.0f);\n"
+"}\n\0";
 
 int main()
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);  
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* GWindow = glfwCreateWindow(800,800,"Main Window", NULL, NULL);
+    //apuntador de refrencia a la ventana que se usara en la gpu
+    GLFWwindow* window = glfwCreateWindow(800, 800, "test", NULL, NULL);
 
-    //Single triangle
-    /*GLfloat vertices[] =  
-    {
-        -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-        0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-        0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f
-    };*/
-
-#pragma region Tri-force
-    //Tri-force triangle
     GLfloat vertices[] =
     {
-    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
-    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
+         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,       // Esquina inferior izq
+         0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,        // Esquina inferior derecha
+         0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,   // Esquina superior
+         -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,      // Interior izquierda
+         0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    // Interior derecha
+         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f        // Interior abajo
     };
 
-        //Tri-force triangle
-        GLuint indices[] =
-        {
-        0, 3, 5, // Triangulo inferior izq
-        3, 2, 4, // Triangulo inferior der
-        5, 4, 1 // Triangulo superior
-        };
-#pragma endregion
+    GLfloat insideVertex[] =
+    {
+         -0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,       // Esquina inferior izq
+         -0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,      // Interior izquierda
+         -0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,        // Interior abajo
 
- 
-    //Se debe agregar el contexto de OpenGL. Cada ventana GLFW tiene su propio contexto. 
-    glfwMakeContextCurrent(GWindow);
+
+         0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,        // Interior abajo
+         0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,        // Esquina inferior derecha
+         0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,   // Esquina superior
+
+         -0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,      // Interior izquierda
+         0.0f, 0.45f * float(sqrt(3)) * 2 / 3, 0.0f,   // Esquina superior
+         0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,    // Interior derecha
+    };
+
+    GLuint indices[] =
+    {
+    0, 3, 5, // Triangulo inferior izq
+    3, 2, 4, // Triangulo inferior der
+    5, 4, 1 // Triangulo superior
+    };
+
+    GLuint insideIndex[] =
+    {
+    0, 1, 2, // Triangulo inferior izq
+    3, 4, 5, // Triangulo inferior der
+    6, 7, 8 // Triangulo superior
+    };
+
+    glfwMakeContextCurrent(window);
     gladLoadGL();
-    
 
-#pragma region Shaders
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);  //Shader = new shader
+    //se crean shaders
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
+
+    GLuint insideVertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(insideVertexShader, 1, &insideVertexShaderSource, NULL);
+    glCompileShader(insideVertexShader);
 
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
 
-    GLuint shaderProgram = glCreateProgram(); //Se agrupan los shaders en uno solo
+    GLuint insideFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(insideFragmentShader, 1, &insideFragmentShaderSource, NULL);
+    glCompileShader(insideFragmentShader);
+
+    //se crea un programa donde se guardan los shaders
+    GLuint shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
 
-    glDeleteShader(vertexShader); //Se eliminan los shaders
+    GLuint insideShaderProgram = glCreateProgram();
+    glAttachShader(insideShaderProgram, insideVertexShader);
+    glAttachShader(insideShaderProgram, insideFragmentShader);
+    glLinkProgram(insideShaderProgram);
+
+    //Se eliminan los shaders
+    glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-#pragma endregion
+    glDeleteShader(insideVertexShader);
+    glDeleteShader(insideFragmentShader);
 
-#pragma region CpuToGpu
-    GLuint VAO, VBO, EBO;
 
-    //Almacenado y renderizado en la memoria del GPU
+    //se almacena y renderiza la infromacion en la gpu
+    GLuint VAO, VBO;
+    GLuint EBO;
+
+    GLuint InsideVAO, InsideVBO;
+    GLuint InsideEBO;
+
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
+    glGenBuffers(1, &EBO);
+
+    glGenVertexArrays(1, &InsideVAO);
+    glGenBuffers(1, &InsideVBO);
+    glGenBuffers(1, &InsideEBO);
 
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //se usa para ambos
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-#pragma endregion
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
-     
-    glViewport(0,0,800,800);//Coordenadas de la ventana viewport
-    glClearColor(.3, .2, .8, 0); //Color en 0 - 1
-    glClear(GL_COLOR_BUFFER_BIT); //Limpia el viewport 
-    glfwSwapBuffers(GWindow); 
 
-    //Mientras no se cierre la ventana, lee los eventos. Se debe mantener viva la ventana. 
-    while (!glfwWindowShouldClose(GWindow))
+
+    glBindVertexArray(InsideVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, InsideVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(insideVertex), insideVertex, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, InsideEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(insideIndex), insideIndex, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+    glViewport(0, 0, 800, 800);
+    glfwSwapBuffers(window);
+
+    while (!glfwWindowShouldClose(window))
     {
-        glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+        glClearColor(0.5255f, 0.8706f, 0.4471, 1);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-            glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT,0);
-        glfwSwapBuffers(GWindow);
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glUseProgram(insideShaderProgram);
+        glBindVertexArray(InsideVAO);
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glfwSwapBuffers(window);
 
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &VAO);//Se libera el buffer usado anteriormente
+    //limpia el buffer para liberar la gpu
+    glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &InsideVAO);
+    glDeleteBuffers(1, &InsideVBO);
+    glDeleteBuffers(1, &InsideEBO);
     glDeleteProgram(shaderProgram);
-
-    //Destruye la ventana
-    glfwDestroyWindow(GWindow);
+    glDeleteProgram(insideShaderProgram);
 
     glfwTerminate();
-    return 0;
 }
