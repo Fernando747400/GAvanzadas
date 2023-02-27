@@ -26,13 +26,36 @@ int main()
 
     GLFWwindow* GWindow = glfwCreateWindow(800,800,"Main Window", NULL, NULL);
 
-    GLfloat vertices[] =
+    //Single triangle
+    /*GLfloat vertices[] =  
     {
         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
         0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
         0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f
+    };*/
+
+#pragma region Tri-force
+    //Tri-force triangle
+    GLfloat vertices[] =
+    {
+    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
+    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
     };
 
+        //Tri-force triangle
+        GLuint indices[] =
+        {
+        0, 3, 5, // Triangulo inferior izq
+        3, 2, 4, // Triangulo inferior der
+        5, 4, 1 // Triangulo superior
+        };
+#pragma endregion
+
+ 
     //Se debe agregar el contexto de OpenGL. Cada ventana GLFW tiene su propio contexto. 
     glfwMakeContextCurrent(GWindow);
     gladLoadGL();
@@ -57,22 +80,26 @@ int main()
 #pragma endregion
 
 #pragma region CpuToGpu
-    GLuint VAO, VBO;
+    GLuint VAO, VBO, EBO;
 
     //Almacenado y renderizado en la memoria del GPU
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+        glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //se usa para ambos
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
     glBindVertexArray(0);
 #pragma endregion
 
@@ -91,6 +118,7 @@ int main()
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT,0);
         glfwSwapBuffers(GWindow);
 
         glfwPollEvents();
@@ -98,6 +126,7 @@ int main()
 
     glDeleteVertexArrays(1, &VAO);//Se libera el buffer usado anteriormente
     glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
 
     //Destruye la ventana
