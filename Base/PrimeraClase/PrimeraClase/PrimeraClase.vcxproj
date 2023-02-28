@@ -152,6 +152,7 @@
     <None Include="black.frag" />
     <None Include="default.frag" />
     <None Include="devault.vert" />
+    <None Include="yellow.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -55,5 +55,8 @@
     <None Include="devault.vert">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
+    <None Include="yellow.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
