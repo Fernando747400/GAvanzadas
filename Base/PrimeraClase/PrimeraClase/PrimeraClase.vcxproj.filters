@@ -52,10 +52,16 @@
     <None Include="default.frag">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
-    <None Include="devault.vert">
+    <None Include="default.vert">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
     <None Include="yellow.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="triforce.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="triforceinside.vert">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
   </ItemGroup>
