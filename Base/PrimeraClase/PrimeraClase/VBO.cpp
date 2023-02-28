@@ -2,11 +2,11 @@
 
 //Constructor
 
-VBO::VBO(GLuint* indices, GLsizeiptr size)
+VBO::VBO(GLuint* vertices, GLsizeiptr size)
 {
-	glGenBuffers(1, &ID);
+	glGenBuffers(1,&ID);
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }
 
 void VBO::Bind()
@@ -21,5 +21,5 @@ void VBO::Unbind()
 
 void VBO::Delete()
 {
-	glDeleteBuffers(1, &ID);
+	glDeleteBuffers(1,&ID);
 }
