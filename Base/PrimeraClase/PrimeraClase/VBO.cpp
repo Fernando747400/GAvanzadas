@@ -2,7 +2,7 @@
 
 //Constructor
 
-VBO::VBO(GLuint* vertices, GLsizeiptr size)
+VBO::VBO(GLfloat* vertices, GLsizeiptr size)
 {
 	glGenBuffers(1,&ID);
 	glBindBuffer(GL_ARRAY_BUFFER, ID);

@@ -9,7 +9,7 @@ public:
 	GLuint ID;
 
 	//Constuctor to generate an Elements Buffer Object and links them to the indexes.
-	VBO(GLuint* vertices, GLsizeiptr size);
+	VBO(GLfloat* vertices, GLsizeiptr size);
 
 	void Bind();
 	void Unbind();
