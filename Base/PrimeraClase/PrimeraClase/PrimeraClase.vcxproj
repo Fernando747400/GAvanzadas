@@ -164,6 +164,7 @@
     <None Include="black.frag" />
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="rainbow.frag" />
     <None Include="triforce.vert" />
     <None Include="triforceinside.vert" />
     <None Include="yellow.frag" />

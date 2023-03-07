@@ -21,6 +21,17 @@ float GetNegativeScale(float baseScale, float percentageDifference)
     return scale;
 }
 
+float randomFloat()
+{
+    return (float)(rand()) / (float)(RAND_MAX);
+}
+
+float GetAbsTime() {
+    float time = 1.2f + 0.4f * abs(sin(glfwGetTime()));
+	return time;
+}
+
+
 int main()
 {
     glfwInit();
@@ -34,28 +45,28 @@ int main()
 #pragma region Verts
     GLfloat vertices[] =
     {
-         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,       // Esquina inferior izq
-         0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,        // Esquina inferior derecha
-         0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,   // Esquina superior
-         -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,      // Interior izquierda
-         0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    // Interior derecha
-         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f        // Interior abajo
+         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,       0.541f, 0.090f, 0.890f,       // Esquina inferior izq
+         0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.227f, 0.831f, 0.266f,       // Esquina inferior derecha
+         0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     0.241f, 0.090f, 0.890f,  // Esquina superior
+         -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    0.041f, 0.090f, 0.890f,     // Interior izquierda
+         0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,     0.341f, 0.090f, 0.890f,   // Interior derecha
+         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.941f, 0.090f, 0.890f       // Interior abajo
     };
 
     GLfloat insideVertex[] =
     {
-         -0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,       // Esquina inferior izq
-         -0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,      // Interior izquierda
-         -0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,        // Interior abajo
+         -0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.541f, 0.090f, 0.890f,       // Esquina inferior izq
+         -0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,     0.227f, 0.831f, 0.266f,       // Interior izquierda
+         -0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.541f, 0.090f, 0.890f,        // Interior abajo
 
 
-         0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,        // Interior abajo
-         0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,        // Esquina inferior derecha
-         0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,   // Esquina superior
+         0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.341f, 0.090f, 0.890f,        // Interior abajo
+         0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.641f, 0.090f, 0.890f,        // Esquina inferior derecha
+         0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,  0.641f, 0.090f, 0.890f,   // Esquina superior
 
-         -0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,      // Interior izquierda
-         0.0f, 0.45f * float(sqrt(3)) * 2 / 3, 0.0f,   // Esquina superior
-         0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,    // Interior derecha
+         -0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,        0.741f, 0.090f, 0.890f,      // Interior izquierda
+         0.0f, 0.45f * float(sqrt(3)) * 2 / 3, 0.0f,        0.941f, 0.090f, 0.890f,   // Esquina superior
+         0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,         0.041f, 0.090f, 0.890f    // Interior derecha
     };
 
     GLuint indices[] =
@@ -78,8 +89,8 @@ int main()
     gladLoadGL();
 
     //Shader _shaderProgram("default.vert", "default.frag");
-    Shader _shaderOutside("triforce.vert", "black.frag");
-    Shader _shaderInside("triforceinside.vert","yellow.frag");
+    Shader _shaderOutside("triforce.vert", "rainbow.frag");
+    Shader _shaderInside("triforceinside.vert","rainbow.frag");
 
     VAO VAO1;
     VAO1.Bind();
@@ -87,13 +98,15 @@ int main()
     VBO VBO1(vertices, sizeof(vertices));
     EBO EBO1(indices, sizeof(indices));
 
-    VAO1.LinkVBO(VBO1, 0);
+    VAO1.LinkAttributes(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+    VAO1.LinkAttributes(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
 
     GLuint _outsideScale = glGetUniformLocation(_shaderOutside.ID, "scale");
+    GLuint _outsideColorOffset = glGetUniformLocation(_shaderOutside.ID, "offsetColor");
 
     VAO VAO2;
     VAO2.Bind();
@@ -101,13 +114,15 @@ int main()
     VBO VBO2(insideVertex, sizeof(insideVertex));
     EBO EBO2(insideIndex, sizeof(insideIndex));
 
-    VAO2.LinkVBO(VBO2, 0);
+    VAO2.LinkAttributes(VBO2, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+    VAO2.LinkAttributes(VBO2, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     VAO2.Unbind();
     VBO2.Unbind();
     EBO2.Unbind();
 
     GLuint _insideScale = glGetUniformLocation(_shaderInside.ID, "scale");
+    GLuint _insideColorOffset = glGetUniformLocation(_shaderOutside.ID, "offsetColor");
 
     glViewport(0, 0, 1000, 1000);
     glfwSwapBuffers(window);
@@ -119,11 +134,13 @@ int main()
 
         _shaderOutside.Activate();
         glUniform1f(_outsideScale, GetNegativeScale(0.8f, 0.2f));
+        glUniform1f(_outsideColorOffset, GetAbsTime());
         VAO1.Bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         _shaderInside.Activate();
         glUniform1f(_insideScale, GetScale(1.0f, 0.2f));
+        glUniform1f(_insideColorOffset, GetAbsTime());
         VAO2.Bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);    
 

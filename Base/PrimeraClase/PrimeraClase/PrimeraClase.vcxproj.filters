@@ -70,5 +70,8 @@
     <None Include="triforceinside.vert">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
+    <None Include="rainbow.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
