@@ -7,6 +7,29 @@
 #include"VBO.h"
 #include"EBO.h"
 
+float _mainScale = 1.0f;
+float _mainSpeed = 1.0f;
+float _mainGrowValue = 0.005f;
+bool _growing = true;
+
+float GetScale()
+{
+    if (_mainScale < 1.2 && _growing)
+    {
+    _mainScale = _mainScale + (_mainGrowValue * _mainSpeed);
+    }
+    
+    if (_mainScale > 1.2) _growing = false;
+
+    if(_mainScale > 0.7 && _growing == false) {
+        _mainScale = _mainScale - (_mainGrowValue * _mainSpeed);
+    }
+
+    if (_mainScale < 0.8) _growing = true;
+
+    return _mainScale;
+}
+
 int main()
 {
     glfwInit();
@@ -63,9 +86,9 @@ int main()
     glfwMakeContextCurrent(window);
     gladLoadGL();
 
-    Shader _shaderProgram("default.vert", "default.frag");
-    Shader _shaderInside("triforceinside.vert","yellow.frag");
+    //Shader _shaderProgram("default.vert", "default.frag");
     Shader _shaderOutside("triforce.vert", "black.frag");
+    Shader _shaderInside("triforceinside.vert","yellow.frag");
 
     VAO VAO1;
     VAO1.Bind();
@@ -79,6 +102,22 @@ int main()
     VBO1.Unbind();
     EBO1.Unbind();
 
+    GLuint _outsideScale = glGetUniformLocation(_shaderOutside.ID, "scale");
+
+    VAO VAO2;
+    VAO2.Bind();
+
+    VBO VBO2(insideVertex, sizeof(insideVertex));
+    EBO EBO2(insideIndex, sizeof(insideIndex));
+
+    VAO2.LinkVBO(VBO2, 0);
+
+    VAO2.Unbind();
+    VBO2.Unbind();
+    EBO2.Unbind();
+
+    GLuint _insideScale = glGetUniformLocation(_shaderInside.ID, "scale");
+
     glViewport(0, 0, 800, 800);
     glfwSwapBuffers(window);
 
@@ -87,8 +126,13 @@ int main()
         glClearColor(0.5255f, 0.8706f, 0.4471, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        _shaderProgram.Activate();
+        _shaderOutside.Activate();
         VAO1.Bind();
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+
+        _shaderInside.Activate();
+        glUniform1f(_insideScale, GetScale());
+        VAO2.Bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);    
 
         glfwSwapBuffers(window);
@@ -100,8 +144,12 @@ int main()
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
+    VAO2.Delete();
+    VBO2.Delete();
+    EBO2.Delete();
 
-    _shaderProgram.Delete();
+    _shaderOutside.Delete();
+    _shaderInside.Delete();
 
     glfwDestroyWindow(window);
     glfwTerminate();
