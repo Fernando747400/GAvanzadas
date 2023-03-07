@@ -45,28 +45,29 @@ int main()
 #pragma region Verts
     GLfloat vertices[] =
     {
-         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,       0.541f, 0.090f, 0.890f,       // Esquina inferior izq
-         0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.227f, 0.831f, 0.266f,       // Esquina inferior derecha
-         0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     0.241f, 0.090f, 0.890f,  // Esquina superior
-         -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    0.041f, 0.090f, 0.890f,     // Interior izquierda
-         0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,     0.341f, 0.090f, 0.890f,   // Interior derecha
-         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.941f, 0.090f, 0.890f       // Interior abajo
+         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,       0.941f, 0.047f, 0.756f,       // Esquina inferior izq
+         0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.831f, 0.047f, 0.980f,       // Esquina inferior derecha
+         0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     0.321f, 0.047f, 0.980f,  // Esquina superior
+
+         -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    0.133f, 0.901f, 0.415f,   // Interior izquierda
+         0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,     0.901f, 0.674f, 0.313f,  // Interior derecha
+         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.360f, 0.090f, 0.6f       // Interior abajo
     };
 
     GLfloat insideVertex[] =
     {
-         -0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.541f, 0.090f, 0.890f,       // Esquina inferior izq
-         -0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,     0.227f, 0.831f, 0.266f,       // Interior izquierda
-         -0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.541f, 0.090f, 0.890f,        // Interior abajo
+         -0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.223f, 0.560f, 0.901f,       // Esquina inferior izq
+         -0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,     0.901f, 0.352f, 0.313f,       // Interior izquierda
+         -0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.819f, 0.901f, 0.133f,        // Interior abajo
 
 
-         0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.341f, 0.090f, 0.890f,        // Interior abajo
-         0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.641f, 0.090f, 0.890f,        // Esquina inferior derecha
-         0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,  0.641f, 0.090f, 0.890f,   // Esquina superior
+         0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.360f, 0.090f, 0.6f,        // Interior abajo
+         0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.901f, 0.674f, 0.313f,        // Esquina inferior derecha
+         0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,  0.133f, 0.901f, 0.415f,   // Esquina superior
 
-         -0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,        0.741f, 0.090f, 0.890f,      // Interior izquierda
-         0.0f, 0.45f * float(sqrt(3)) * 2 / 3, 0.0f,        0.941f, 0.090f, 0.890f,   // Esquina superior
-         0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,         0.041f, 0.090f, 0.890f    // Interior derecha
+         -0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,        0.321f, 0.047f, 0.980f,      // Interior izquierda
+         0.0f, 0.45f * float(sqrt(3)) * 2 / 3, 0.0f,        0.831f, 0.047f, 0.980f,   // Esquina superior
+         0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,         0.941f, 0.047f, 0.756f    // Interior derecha
     };
 
     GLuint indices[] =
@@ -129,7 +130,7 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(0.5255f, 0.8706f, 0.4471, 1);
+        glClearColor(0.901f, 0.313f, 0.431f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
         _shaderOutside.Activate();
