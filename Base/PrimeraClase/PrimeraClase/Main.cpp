@@ -7,27 +7,18 @@
 #include"VBO.h"
 #include"EBO.h"
 
-float _mainScale = 1.0f;
-float _mainSpeed = 1.0f;
-float _mainGrowValue = 0.005f;
-bool _growing = true;
 
-float GetScale()
+//A method that return a float that scales with SIN +- 20% of original size
+float GetScale(float baseScale, float percentageDifference)
 {
-    if (_mainScale < 1.2 && _growing)
-    {
-    _mainScale = _mainScale + (_mainGrowValue * _mainSpeed);
-    }
-    
-    if (_mainScale > 1.2) _growing = false;
+	float scale = baseScale + percentageDifference * sin(glfwGetTime());
+	return scale;
+}
 
-    if(_mainScale > 0.7 && _growing == false) {
-        _mainScale = _mainScale - (_mainGrowValue * _mainSpeed);
-    }
-
-    if (_mainScale < 0.8) _growing = true;
-
-    return _mainScale;
+float GetNegativeScale(float baseScale, float percentageDifference)
+{
+    float scale = baseScale + percentageDifference * -sin(glfwGetTime());
+    return scale;
 }
 
 int main()
@@ -38,7 +29,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     //apuntador de refrencia a la ventana que se usara en la gpu
-    GLFWwindow* window = glfwCreateWindow(800, 800, "test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1000, 1000, "test", NULL, NULL);
 
 #pragma region Verts
     GLfloat vertices[] =
@@ -118,7 +109,7 @@ int main()
 
     GLuint _insideScale = glGetUniformLocation(_shaderInside.ID, "scale");
 
-    glViewport(0, 0, 800, 800);
+    glViewport(0, 0, 1000, 1000);
     glfwSwapBuffers(window);
 
     while (!glfwWindowShouldClose(window))
@@ -127,11 +118,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         _shaderOutside.Activate();
+        glUniform1f(_outsideScale, GetNegativeScale(0.8f, 0.2f));
         VAO1.Bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         _shaderInside.Activate();
-        glUniform1f(_insideScale, GetScale());
+        glUniform1f(_insideScale, GetScale(1.0f, 0.2f));
         VAO2.Bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);    
 
