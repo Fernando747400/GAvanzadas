@@ -36,6 +36,9 @@
     <ClCompile Include="ShaderClass.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -68,6 +71,9 @@
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
     <None Include="triforceinside.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="rainbow.frag">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
   </ItemGroup>
