@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Gráficas avanzadas\GAvanzadas\Base\PrimeraClase\include</IncludePath>
+    <IncludePath>C:\Gráficas avanzadas\GAvanzadas\Base\PrimeraClase\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Gráficas avanzadas\GAvanzadas\Base\PrimeraClase\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>A:\Repositorios\GAvanzadas\Base\PrimeraClase\include;$(IncludePath)</IncludePath>
-    <LibraryPath>A:\Repositorios\GAvanzadas\Base\PrimeraClase\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Gráficas avanzadas\GAvanzadas\Base\PrimeraClase\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Gráficas avanzadas\GAvanzadas\Base\PrimeraClase\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Repositorios\GAvanzadas\Base\PrimeraClase\include</IncludePath>
@@ -151,6 +151,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ShaderClass.cpp" />
+    <ClCompile Include="stb.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
