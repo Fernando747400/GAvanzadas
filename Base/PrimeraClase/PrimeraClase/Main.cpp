@@ -44,46 +44,20 @@ int main()
     GLFWwindow* window = glfwCreateWindow(1000, 1000, "test", NULL, NULL);
 
 #pragma region Verts
-    GLfloat vertices[] =
+    GLfloat squareVertices[] =
     {
-         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,       0.941f, 0.047f, 0.756f,       // Esquina inferior izq
-         0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.831f, 0.047f, 0.980f,       // Esquina inferior derecha
-         0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     0.321f, 0.047f, 0.980f,  // Esquina superior
-
-         -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    0.133f, 0.901f, 0.415f,   // Interior izquierda
-         0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,     0.901f, 0.674f, 0.313f,  // Interior derecha
-         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,        0.360f, 0.090f, 0.6f       // Interior abajo
+     -0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,
+     -0.5f, 0.5f, 0.0f,     0.0f, 1.0f, 0.0f,
+     0.5f, 0.5f, 0.0f,      0.0f, 0.0f, 1.0f,
+     0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f
     };
 
-    GLfloat insideVertex[] =
+    GLuint squareIndices[] =
     {
-         -0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.223f, 0.560f, 0.901f,       // Esquina inferior izq
-         -0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,     0.901f, 0.352f, 0.313f,       // Interior izquierda
-         -0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,         0.819f, 0.901f, 0.133f,        // Interior abajo
-
-
-         0.05f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.360f, 0.090f, 0.6f,        // Interior abajo
-         0.45f, -0.45f * float(sqrt(3)) / 3, 0.0f,      0.901f, 0.674f, 0.313f,        // Esquina inferior derecha
-         0.5f / 2, 0.5f * float(sqrt(1.5f)) / 6, 0.0f,  0.133f, 0.901f, 0.415f,   // Esquina superior
-
-         -0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,        0.321f, 0.047f, 0.980f,      // Interior izquierda
-         0.0f, 0.45f * float(sqrt(3)) * 2 / 3, 0.0f,        0.831f, 0.047f, 0.980f,   // Esquina superior
-         0.4f / 2, 0.6f * float(sqrt(3)) / 6, 0.0f,         0.941f, 0.047f, 0.756f    // Interior derecha
+     0, 2, 1,
+     0, 3, 2
     };
 
-    GLuint indices[] =
-    {
-    0, 3, 5, // Triangulo inferior izq
-    3, 2, 4, // Triangulo inferior der
-    5, 4, 1 // Triangulo superior
-    };
-
-    GLuint insideIndex[] =
-    {
-    0, 1, 2, // Triangulo inferior izq
-    3, 4, 5, // Triangulo inferior der
-    6, 7, 8 // Triangulo superior
-    };
 #pragma endregion
 
 
@@ -97,9 +71,9 @@ int main()
     VAO VAO1;
     VAO1.Bind();
 
-    VBO VBO1(vertices, sizeof(vertices));
-    EBO EBO1(indices, sizeof(indices));
-
+    VBO VBO1(squareVertices, sizeof(squareVertices));
+    EBO EBO1(squareIndices, sizeof(squareIndices));
+    
     VAO1.LinkAttributes(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
     VAO1.LinkAttributes(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
@@ -109,22 +83,6 @@ int main()
 
     GLuint _outsideScale = glGetUniformLocation(_shaderOutside.ID, "scale");
     GLuint _outsideColorOffset = glGetUniformLocation(_shaderOutside.ID, "offsetColor");
-
-    VAO VAO2;
-    VAO2.Bind();
-
-    VBO VBO2(insideVertex, sizeof(insideVertex));
-    EBO EBO2(insideIndex, sizeof(insideIndex));
-
-    VAO2.LinkAttributes(VBO2, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-    VAO2.LinkAttributes(VBO2, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    VAO2.Unbind();
-    VBO2.Unbind();
-    EBO2.Unbind();
-
-    GLuint _insideScale = glGetUniformLocation(_shaderInside.ID, "scale");
-    GLuint _insideColorOffset = glGetUniformLocation(_shaderOutside.ID, "offsetColor");
 
     glViewport(0, 0, 1000, 1000);
     glfwSwapBuffers(window);
@@ -138,13 +96,9 @@ int main()
         glUniform1f(_outsideScale, GetNegativeScale(0.8f, 0.2f));
         glUniform1f(_outsideColorOffset, GetAbsTime());
         VAO1.Bind();
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
-        _shaderInside.Activate();
-        glUniform1f(_insideScale, GetScale(1.0f, 0.2f));
-        glUniform1f(_insideColorOffset, GetAbsTime());
-        VAO2.Bind();
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);    
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);    
 
         glfwSwapBuffers(window);
 
@@ -155,9 +109,6 @@ int main()
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
-    VAO2.Delete();
-    VBO2.Delete();
-    EBO2.Delete();
 
     _shaderOutside.Delete();
     _shaderInside.Delete();
