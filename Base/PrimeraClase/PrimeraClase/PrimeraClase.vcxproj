@@ -166,9 +166,14 @@
     <None Include="default.frag" />
     <None Include="default.vert" />
     <None Include="rainbow.frag" />
+    <None Include="Texture.frag" />
+    <None Include="Texture.vert" />
     <None Include="triforce.vert" />
     <None Include="triforceinside.vert" />
     <None Include="yellow.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Cat.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

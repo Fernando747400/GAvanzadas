@@ -35,6 +35,31 @@ float GetAbsTime() {
 
 int main()
 {
+#pragma region ImageTexture
+    int widthTx, heightTx, numCol;
+
+    unsigned char* bytes = stbi_load("Cat.png", &widthTx, &heightTx, &numCol, 0);
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_PROXY_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_PROXY_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthTx, heightTx, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(bytes);
+    glBindTexture(GL_TEXTURE_2D, 0);
+#pragma endregion
+
+   
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -46,10 +71,10 @@ int main()
 #pragma region Verts
     GLfloat squareVertices[] =
     {
-     -0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,
-     -0.5f, 0.5f, 0.0f,     0.0f, 1.0f, 0.0f,
-     0.5f, 0.5f, 0.0f,      0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f
+     -0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+     -0.5f, 0.5f, 0.0f,     0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+     0.5f, 0.5f, 0.0f,      0.0f, 0.0f, 1.0f,   1.0f, 1.0f,
+     0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,   1.0f, 0.0f
     };
 
     GLuint squareIndices[] =
@@ -64,11 +89,11 @@ int main()
     glfwMakeContextCurrent(window);
     gladLoadGL();
 
-    //Shader _shaderProgram("default.vert", "default.frag");
-    Shader _shaderOutside("triforce.vert", "rainbow.frag");
-    Shader _shaderInside("triforceinside.vert","rainbow.frag");
+    Shader _textureShader("Texture.vert", "Texture.frag");
 
     VAO VAO1;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    stbi_set_flip_vertically_on_load(true);
     VAO1.Bind();
 
     VBO VBO1(squareVertices, sizeof(squareVertices));
@@ -77,12 +102,13 @@ int main()
     VAO1.LinkAttributes(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
     VAO1.LinkAttributes(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
+    VAO1.LinkAttributes(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float))); // New line
+
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
 
-    GLuint _outsideScale = glGetUniformLocation(_shaderOutside.ID, "scale");
-    GLuint _outsideColorOffset = glGetUniformLocation(_shaderOutside.ID, "offsetColor");
+    GLuint tex0uni = glGetUniformLocation(_textureShader.ID, "tex0");
 
     glViewport(0, 0, 1000, 1000);
     glfwSwapBuffers(window);
@@ -92,9 +118,10 @@ int main()
         glClearColor(0.901f, 0.313f, 0.431f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        _shaderOutside.Activate();
-        glUniform1f(_outsideScale, GetNegativeScale(0.8f, 0.2f));
-        glUniform1f(_outsideColorOffset, GetAbsTime());
+        _textureShader.Activate();
+
+        glUniform1i(tex0uni, 0);
+
         VAO1.Bind();
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -110,8 +137,7 @@ int main()
     VBO1.Delete();
     EBO1.Delete();
 
-    _shaderOutside.Delete();
-    _shaderInside.Delete();
+    _textureShader.Delete();
 
     glfwDestroyWindow(window);
     glfwTerminate();

@@ -16,6 +16,9 @@
     <Filter Include="Archivos de recursos\Shaders">
       <UniqueIdentifier>{c44fc70e-45f4-4acc-9ba0-686f86ee72ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de recursos\Textures">
+      <UniqueIdentifier>{a35b3951-92a6-45c5-b71a-4ae43363994e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -76,5 +79,16 @@
     <None Include="rainbow.frag">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
+    <None Include="Texture.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Texture.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Cat.png">
+      <Filter>Archivos de recursos\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
