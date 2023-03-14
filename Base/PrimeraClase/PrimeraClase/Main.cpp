@@ -8,12 +8,12 @@
 #include"VBO.h"
 #include"EBO.h"
 
-
+#pragma region MyMethods
 //A method that return a float that scales with SIN +- 20% of original size
 float GetScale(float baseScale, float percentageDifference)
 {
-	float scale = baseScale + percentageDifference * sin(glfwGetTime());
-	return scale;
+    float scale = baseScale + percentageDifference * sin(glfwGetTime());
+    return scale;
 }
 
 float GetNegativeScale(float baseScale, float percentageDifference)
@@ -29,8 +29,9 @@ float randomFloat()
 
 float GetAbsTime() {
     float time = 1.2f + 0.4f * abs(sin(glfwGetTime()));
-	return time;
+    return time;
 }
+#pragma endregion
 
 
 int main()
@@ -38,6 +39,7 @@ int main()
 #pragma region ImageTexture
     int widthTx, heightTx, numCol;
 
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* bytes = stbi_load("Cat.png", &widthTx, &heightTx, &numCol, 0);
 
     GLuint texture;
@@ -68,6 +70,9 @@ int main()
     //apuntador de refrencia a la ventana que se usara en la gpu
     GLFWwindow* window = glfwCreateWindow(1000, 1000, "test", NULL, NULL);
 
+    glfwMakeContextCurrent(window);
+    gladLoadGL();
+
 #pragma region Verts
     GLfloat squareVertices[] =
     {
@@ -85,23 +90,17 @@ int main()
 
 #pragma endregion
 
-
-    glfwMakeContextCurrent(window);
-    gladLoadGL();
-
     Shader _textureShader("Texture.vert", "Texture.frag");
 
     VAO VAO1;
     glBindTexture(GL_TEXTURE_2D, texture);
-    stbi_set_flip_vertically_on_load(true);
     VAO1.Bind();
 
     VBO VBO1(squareVertices, sizeof(squareVertices));
     EBO EBO1(squareIndices, sizeof(squareIndices));
     
-    VAO1.LinkAttributes(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-    VAO1.LinkAttributes(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-
+    VAO1.LinkAttributes(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    VAO1.LinkAttributes(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     VAO1.LinkAttributes(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float))); // New line
 
     VAO1.Unbind();
@@ -110,6 +109,9 @@ int main()
 
     GLuint tex0uni = glGetUniformLocation(_textureShader.ID, "tex0");
 
+    _textureShader.Activate();
+    glUniform1i(tex0uni, 0);
+
     glViewport(0, 0, 1000, 1000);
     glfwSwapBuffers(window);
 
@@ -117,10 +119,6 @@ int main()
     {
         glClearColor(0.901f, 0.313f, 0.431f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        _textureShader.Activate();
-
-        glUniform1i(tex0uni, 0);
 
         VAO1.Bind();
 
