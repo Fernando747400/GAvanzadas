@@ -13,6 +13,7 @@ public:
 
 	Texture(const char* image, GLenum texType, GLenum slot, GLenum format,GLenum pixelType);
 
+	void textUnit(Shader shader, const char* unifrom, GLuint unit);
 	void Bind();
 	void Unbind();
 	void Delete();
