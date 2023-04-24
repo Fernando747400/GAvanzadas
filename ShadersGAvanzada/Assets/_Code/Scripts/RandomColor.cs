@@ -1,12 +1,11 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class RandomColor : MonoBehaviour
 {
-    public Color color;
-    public float time;
-    public Renderer renderer;
+    public Color ColorCurrent;
+    public float Time;
+    public Renderer RendererCurrent;
 
     private void Start()
     {
@@ -17,9 +16,9 @@ public class RandomColor : MonoBehaviour
     {
         while (true)
         {
-            color = Random.ColorHSV();
-            renderer.material.SetColor("_Color", color);
-            yield return new WaitForSeconds(time);
+            ColorCurrent = Random.ColorHSV();
+            RendererCurrent.material.SetColor("_Color", ColorCurrent);
+            yield return new WaitForSeconds(Time);
         }
     }
 }
