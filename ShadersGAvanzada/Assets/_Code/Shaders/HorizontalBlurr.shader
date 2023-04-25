@@ -14,8 +14,8 @@ Shader "Unlit/HorizontalBlurr"
         Pass
         {
             CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma vertex vertex
+            #pragma fragment fragVertical
 
             #include "UnityCG.cginc"
 
@@ -35,7 +35,7 @@ Shader "Unlit/HorizontalBlurr"
             float _KernelSize;
             float4 _TextureWidth;
 
-            v2f vert (appdata v)
+            v2f vertex (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -43,7 +43,7 @@ Shader "Unlit/HorizontalBlurr"
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            fixed4 fragVertical(v2f i) : SV_Target
             {
                float texelSize = 1.0 / _TextureWidth;
                fixed4 result = fixed4(0.0, 0.0, 0.0, 0.0);
@@ -51,7 +51,7 @@ Shader "Unlit/HorizontalBlurr"
                for (int j = -_KernelSize; j <= _KernelSize; j++) 
                {
                    float weight = float(j);
-                   fixed4 sample = text2D(_MainTex, i.uv + fixed2(weight * texelSize, 0.0));.
+                   fixed4 sample = text2D(_MainTex, i.uv + fixed2(weight * texelSize, 0.0));
                    result += sample;
                }
 
