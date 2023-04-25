@@ -3,6 +3,8 @@ Shader "Unlit/HorizontalBlurr"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _KernelSize("Kernel Size", Range(1,30)) = 5
+        _TextureWidth("Texture Width",Range (1,4096)) = 1024
     }
     SubShader
     {
@@ -14,8 +16,6 @@ Shader "Unlit/HorizontalBlurr"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
 
@@ -28,7 +28,6 @@ Shader "Unlit/HorizontalBlurr"
             struct v2f
             {
                 float2 uv : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
             };
 
@@ -40,8 +39,7 @@ Shader "Unlit/HorizontalBlurr"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                UNITY_TRANSFER_FOG(o,o.vertex);
+                o.uv = v.uv;
                 return o;
             }
 
@@ -53,7 +51,7 @@ Shader "Unlit/HorizontalBlurr"
                for (int j = -_KernelSize; j <= _KernelSize; j++) 
                {
                    float weight = float(j);
-                   fixed4 sample = text2D(_MainTex, i.uv + fixed2(weight * texelSize, 0.0));
+                   fixed4 sample = text2D(_MainTex, i.uv + fixed2(weight * texelSize, 0.0));.
                    result += sample;
                }
 
