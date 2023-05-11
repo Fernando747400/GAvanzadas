@@ -32,6 +32,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: cd2af728755937f4e80e84ead931e649, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ParallaxHeightMap:
+        m_Texture: {fileID: 2800000, guid: ac5dce02e0a2395499e085e917f5fcb7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _HeightMapStrength: 0.6
